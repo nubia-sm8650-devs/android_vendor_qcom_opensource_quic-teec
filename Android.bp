@@ -1,0 +1,18 @@
+//
+// SPDX-FileCopyrightText: The LineageOS Project
+// SPDX-License-Identifier: Apache-2.0
+//
+
+cc_library_static {
+    name: "libqcomtee",
+    vendor: true,
+    srcs: [
+        "libqcomtee/src/objects/credentials_obj.c",
+        "libqcomtee/src/objects/mem_obj.c",
+        "libqcomtee/src/qcomtee_object.c",
+    ],
+    cflags: ["-DUSE_QCBOR"],
+    local_include_dirs: ["libqcomtee/src"],
+    export_include_dirs: ["libqcomtee/include"],
+    static_libs: ["libqcbor_static"],
+}
