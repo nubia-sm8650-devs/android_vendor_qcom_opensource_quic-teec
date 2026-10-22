@@ -13,7 +13,7 @@
  *        and TEE_IOC_SUPPL_SEND IOCTLs, which require user buffers for
  *        @ref QCOMTEE_UBUF_INPUT and @ref QCOMTEE_UBUF_OUTPUT parameters.
  */
-#define DISP_BUFFER 1024
+#define DISP_BUFFER 4096
 
 /**
  * @defgroup ObjectNS Namespace
