@@ -60,6 +60,21 @@ int qcomtee_object_credentials_init(struct qcomtee_object *root,
 int qcomtee_memory_object_alloc(size_t size, struct qcomtee_object *root,
 				struct qcomtee_object **object);
 
+/**
+ * @brief Register a dma-buf as a memory object.
+ *
+ * The dma-buf must be physically contiguous. The caller keeps ownership of
+ * @p fd and its own mapping; the memory object holds a reference to the
+ * dma-buf until it is released with @ref qcomtee_memory_object_release.
+ *
+ * @param fd The dma-buf file descriptor.
+ * @param root The root object to which this object belongs.
+ * @param object Memory object.
+ * @return On success, returns 0; Otherwise, returns -1.
+ */
+int qcomtee_memory_object_register_fd(int fd, struct qcomtee_object *root,
+				      struct qcomtee_object **object);
+
 void *qcomtee_memory_object_addr(struct qcomtee_object *object);
 size_t qcomtee_memory_object_size(struct qcomtee_object *object);
 

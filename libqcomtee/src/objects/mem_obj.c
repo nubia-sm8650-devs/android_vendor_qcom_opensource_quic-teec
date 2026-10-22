@@ -118,6 +118,43 @@ err_release:
 	return -1;
 }
 
+int qcomtee_memory_object_register_fd(int fd, struct qcomtee_object *root,
+				      struct qcomtee_object **object)
+{
+	struct root_object *root_object = ROOT_OBJECT(root);
+	struct tee_ioctl_shm_register_fd_data data = { 0 };
+	struct qcomtee_memory *qcomtee_mem;
+	int shm_fd;
+
+	qcomtee_mem = qcomtee_memory_alloc();
+	if (!qcomtee_mem)
+		return -1;
+
+	data.fd = fd;
+	shm_fd = root_object->tee_call(root_object->fd, TEE_IOC_SHM_REGISTER_FD,
+				       &data);
+	if (shm_fd < 0)
+		goto err_release;
+
+	/* Assign TEE shm; the caller keeps its own mapping of the dma-buf. */
+	qcomtee_mem->object.tee_object_id = data.id;
+	qcomtee_mem->fd = shm_fd;
+	qcomtee_mem->mem_info.size = data.size;
+	qcomtee_mem->type = QCOMTEE_MEMORY_TEE_REGISTER;
+	/* Keep a copy of root object; released in qcomtee_object_refs_dec. */
+	qcomtee_object_refs_inc(root);
+	qcomtee_mem->object.root = root;
+
+	*object = &qcomtee_mem->object;
+
+	return 0;
+
+err_release:
+	qcomtee_memory_object_release(&qcomtee_mem->object);
+
+	return -1;
+}
+
 void *qcomtee_memory_object_addr(struct qcomtee_object *object)
 {
 	return MEMORY(object)->mem_info.addr;
